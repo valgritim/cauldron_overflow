@@ -1,0 +1,3 @@
+monolog:
+    channels: ['markdown'] 
+#if I want to use this channel I must use LoggerInterface $markdownLogger as variable

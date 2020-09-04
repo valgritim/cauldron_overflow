@@ -1,13 +1,24 @@
 <?php
 namespace App\Controller;
 
-use Knp\Bundle\MarkdownBundle\MarkdownParserInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Psr\Log\LoggerInterface;
+use App\Service\MarkdownHelper;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+
 
 class QuestionController extends AbstractController{
+
+    private $logger;
+    private $isDebug;
+
+    //If I need the services in all the methods
+    public function __construct(LoggerInterface $logger, bool $isDebug)
+    {
+        $this->logger = $logger;
+        $this->isDebug = $isDebug;
+    }
 
     /**
      * Undocumented function
@@ -19,11 +30,11 @@ class QuestionController extends AbstractController{
     }
 
     /**
-     * Undocumented function
+     * Autowiring services needed in this method
      *
      * @Route("/questions/{slug}", name="app_questions_show")
      */
-    public function show($slug, MarkdownParserInterface $markdown, CacheInterface $cache){
+    public function show($slug, MarkdownHelper $markdownHelper){
 
         $answers = [
             'Make sure your cat is sitting `purrrfectly` still',
@@ -32,12 +43,9 @@ class QuestionController extends AbstractController{
         ];
 
         $questionText = 'I\'ve been turned into a cat, any thoughts on how to turn back? While I\'m **adorable**, I don\'t really care for cat food.';
+        $parsedQuestionText = $markdownHelper->parse($questionText);
+        
 
-        $parsedQuestionText= $cache->get('markdown_'.md5($questionText), function() use($questionText, $markdown){
-            return $markdown->transformMarkdown($questionText);
-        });
-
-        dd($markdown);
        
 
        $deslug = ucwords(str_replace('-',' ', $slug));

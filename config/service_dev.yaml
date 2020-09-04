@@ -1,0 +1,3 @@
+parameters:
+  cache_adapter: cache.adapter.filesystem
+  #Override le parametre que l'on a créé dans le fichier service.yaml parce que le Kernel va charger les services selon l'environnement
